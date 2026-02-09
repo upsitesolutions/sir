@@ -9,9 +9,18 @@ from mbdata.models import (Annotation, Area, Artist, ArtistAlias, Event,
                            LinkRecordingWork, Medium, MediumCDTOC, Place, Recording, Release,
                            ReleaseGroup, ReleaseLabel, ReleaseRaw, ReleaseTag, Series,
                            Work, URL)
-from sqlalchemy import func, select
+from sqlalchemy import func, select, Column, String, Boolean, Text, ForeignKey
 from sqlalchemy.orm import relationship, column_property
 from sqlalchemy.sql.expression import and_
+from sqlalchemy.dialects.postgresql import UUID
+
+
+class LocalRecordingLyrics(Recording.__base__):
+    __tablename__ = 'local_recording_overrides'
+    recording_gid = Column(UUID, ForeignKey('recording.gid'), primary_key=True)
+    lyrics_original = Column(Text)
+    title = Column(String)
+    is_jewish = Column(Boolean)
 
 
 class CustomAnnotation(Annotation):
@@ -120,6 +129,9 @@ class CustomRecording(Recording):
     aliases = relationship("RecordingAlias", viewonly=True)
     first_release_date = relationship("RecordingFirstReleaseDate", viewonly=True)
     tags = relationship("RecordingTag", viewonly=True)
+    lyrics = relationship("LocalRecordingLyrics",
+                          primaryjoin="LocalRecordingLyrics.recording_gid == Recording.gid",
+                          viewonly=True, uselist=False)
 
 
 class CustomReleaseGroup(ReleaseGroup):
