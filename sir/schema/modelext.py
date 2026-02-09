@@ -17,7 +17,7 @@ from sqlalchemy.dialects.postgresql import UUID
 
 class LocalRecordingLyrics(Recording.__base__):
     __tablename__ = 'local_recording_overrides'
-    recording_gid = Column(UUID, ForeignKey('recording.gid'), primary_key=True)
+    recording_gid = Column(UUID, ForeignKey('musicbrainz.recording.gid'), primary_key=True)
     lyrics_original = Column(Text)
     title = Column(String)
     is_jewish = Column(Boolean)
