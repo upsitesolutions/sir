@@ -1054,6 +1054,12 @@ def convert_recording(obj):
     if obj.video:
         recording.set_video("true")
 
+    if obj.lyrics:
+        if obj.lyrics.lyrics_original:
+            recording.set_lyrics_original(obj.lyrics.lyrics_original)
+        if obj.lyrics.override_title:
+            recording.set_override_title(obj.lyrics.override_title)
+
     return recording
 
 
