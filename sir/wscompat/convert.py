@@ -1055,10 +1055,14 @@ def convert_recording(obj):
         recording.set_video("true")
 
     if obj.lyrics:
-        if obj.lyrics.lyrics_original:
-            recording.set_lyrics_original(obj.lyrics.lyrics_original)
-        if obj.lyrics.override_title:
-            recording.set_override_title(obj.lyrics.override_title)
+        # obj.lyrics is a relationship, so it's a list (InstrumentedList).
+        # We need to take the first element if it exists.
+        if len(obj.lyrics) > 0:
+            lyrics_obj = obj.lyrics[0]
+            if lyrics_obj.lyrics_original:
+                recording.set_lyrics_original(lyrics_obj.lyrics_original)
+            if lyrics_obj.override_title:
+                recording.set_override_title(lyrics_obj.override_title)
 
     return recording
 
