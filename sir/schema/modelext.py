@@ -131,7 +131,7 @@ class CustomRecording(Recording):
     tags = relationship("RecordingTag", viewonly=True)
     lyrics = relationship("LocalRecordingLyrics",
                           primaryjoin="LocalRecordingLyrics.recording_gid == Recording.gid",
-                          viewonly=True, uselist=False)
+                          viewonly=True)
 
 
 class CustomReleaseGroup(ReleaseGroup):
