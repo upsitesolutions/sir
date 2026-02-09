@@ -314,7 +314,7 @@ SearchRecording = E(modelext.CustomRecording, [
     F("lyrics_original", "lyrics.lyrics_original"),
     F("mbid", "gid"),
     F("number", "tracks.number"),
-    F("override_title", "lyrics.title"),
+    F("override_title", "lyrics.override_title"),
     F("position", "tracks.medium.position"),
     F("primarytype", "tracks.medium.release.release_group.type.name"),
     F("qdur", "length", transformfunc=tfs.qdur),
