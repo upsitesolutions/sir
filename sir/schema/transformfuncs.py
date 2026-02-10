@@ -97,11 +97,12 @@ def boolean(values):
     """
     :type values: set
     """
-    value = values.pop()
-    if value:
-        return "t"
-    else:
+    if values:
+        value = values.pop()
+        if value:
+            return "t"
         return "f"
+    return "f"
 
 
 def url_type(values):
