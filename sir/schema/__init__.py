@@ -311,6 +311,8 @@ SearchRecording = E(modelext.CustomRecording, [
     F("format", "tracks.medium.format.name"),
     F("isrc", "isrcs.isrc"),
     F("is_jewish", "lyrics.is_jewish", transformfunc=tfs.boolean),
+    F("is_major", "preferred_key.is_major", transformfunc=tfs.boolean),
+    F("key_value", "preferred_key.key_value"),
     F("lyrics_original", "lyrics.lyrics_original"),
     F("mbid", "gid"),
     F("number", "tracks.number"),

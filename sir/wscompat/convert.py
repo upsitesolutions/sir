@@ -1054,6 +1054,17 @@ def convert_recording(obj):
     if obj.video:
         recording.set_video("true")
 
+    if obj.preferred_key:
+        if len(obj.preferred_key) > 0:
+            key_obj = obj.preferred_key[0]
+            if key_obj.key_value:
+                recording.set_key_value(key_obj.key_value)
+            if key_obj.is_major is not None:
+                if key_obj.is_major:
+                    recording.set_is_major("true")
+                else:
+                    recording.set_is_major("false")
+
     if obj.lyrics:
         # obj.lyrics is a relationship, so it's a list (InstrumentedList).
         # We need to take the first element if it exists.

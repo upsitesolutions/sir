@@ -23,6 +23,13 @@ class LocalRecordingLyrics(Recording.__base__):
     is_jewish = Column(Boolean)
 
 
+class LocalRecordingPreferredKey(Recording.__base__):
+    __tablename__ = 'local_recording_preferred_key'
+    recording_gid = Column(UUID, ForeignKey('musicbrainz.recording.gid'), primary_key=True)
+    key_value = Column(String)
+    is_major = Column(Boolean)
+
+
 class CustomAnnotation(Annotation):
     areas = relationship("AreaAnnotation", viewonly=True)
     artists = relationship("ArtistAnnotation", viewonly=True)
@@ -131,6 +138,9 @@ class CustomRecording(Recording):
     tags = relationship("RecordingTag", viewonly=True)
     lyrics = relationship("LocalRecordingLyrics",
                           primaryjoin="LocalRecordingLyrics.recording_gid == Recording.gid",
+                          viewonly=True)
+    preferred_key = relationship("LocalRecordingPreferredKey",
+                          primaryjoin="LocalRecordingPreferredKey.recording_gid == Recording.gid",
                           viewonly=True)
 
 
