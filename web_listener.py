@@ -88,4 +88,12 @@ def start_web_listener():
 if __name__ == "__main__":
     # Ensure logging is configured when running standalone
     logging.basicConfig(level=logging.INFO)
+    try:
+        from sir import config
+        config.read_config()
+    except Exception as e:
+        logger.error(f"Error reading configuration: {e}")
+        import sys
+        sys.exit(1)
+        
     run_server()
