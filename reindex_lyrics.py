@@ -7,7 +7,7 @@ try:
     from sir import config
     from sir.indexing import live_index
     from sir.schema import SCHEMA
-    from sir.schema.modelext import LocalRecordingLyrics
+    from sir.schema.modelext import LocalRecordingLyrics, LocalRecordingPreferredKey
     from sir.util import db_session
 except ImportError:
     print("Error: Could not import 'sir'. Make sure you run this script from the 'sir' repository root and set PYTHONPATH=.")
@@ -31,31 +31,41 @@ def main():
         logger.error("Recording schema not found.")
         sys.exit(1)
 
-    logger.info("Fetching recordings with lyrics overrides...")
+    logger.info("Fetching recordings with lyrics overrides or preferred keys...")
 
     session_factory = db_session()
     with session_factory() as session:
         # Query to find Recording IDs that have corresponding lyrics in LocalRecordingLyrics
-        # We assume LocalRecordingLyrics.lyrics_original is not null/empty implies it has lyrics
-        # or just existence of the row if that's the criteria. 
-        # The request said "reindex all recordings that have lyrics".
-        
         try:
-            stmt = select(Recording.id).\
+            # Fetch recordings with lyrics
+            stmt_lyrics = select(Recording.id).\
                 join(LocalRecordingLyrics, Recording.gid == LocalRecordingLyrics.recording_gid).\
                 where(LocalRecordingLyrics.lyrics_original != None)
             
-            result = session.execute(stmt).scalars().all()
-            recording_ids = set(result)
+            result_lyrics = session.execute(stmt_lyrics).scalars().all()
+            recording_ids = set(result_lyrics)
+            logger.info(f"Found {len(recording_ids)} recordings with lyrics.")
+
+            # Fetch recordings with preferred keys
+            # We assume existence in this table means it has a preferred key
+            stmt_keys = select(Recording.id).\
+                join(LocalRecordingPreferredKey, Recording.gid == LocalRecordingPreferredKey.recording_gid)
+            
+            result_keys = session.execute(stmt_keys).scalars().all()
+            keys_count = len(result_keys)
+            logger.info(f"Found {keys_count} recordings with preferred keys.")
+            
+            recording_ids.update(result_keys)
+
         except Exception as e:
             logger.error(f"Database query failed: {e}")
             sys.exit(1)
 
     if not recording_ids:
-        logger.info("No recordings found with lyrics overrides.")
+        logger.info("No recordings found with overrides.")
         return
 
-    logger.info(f"Found {len(recording_ids)} recordings to reindex.")
+    logger.info(f"Found {len(recording_ids)} total unique recordings to reindex.")
     
     # Trigger live index
     try:
